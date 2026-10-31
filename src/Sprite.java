@@ -7,6 +7,10 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 
@@ -53,14 +57,22 @@ public class Sprite {
         return new File("..", path);
     }
 
-    public static Sprite load(String path) {
+    // เปิดไฟล์จากโฟลเดอร์ก่อน ถ้าไม่เจอให้หาในไฟล์ .jar แทน (ตอนดับเบิลคลิกเล่นจาก jar)
+    public static InputStream open(String path) throws IOException {
         File file = findFile(path);
-        if (!file.exists()) {
-            System.out.println("ไม่พบไฟล์รูป: " + path);
-            return empty();
+        if (file.exists()) {
+            return new FileInputStream(file);
         }
-        try {
-            BufferedImage raw = ImageIO.read(file);
+        InputStream in = Sprite.class.getResourceAsStream("/" + path);
+        if (in == null) {
+            throw new FileNotFoundException(path);
+        }
+        return in;
+    }
+
+    public static Sprite load(String path) {
+        try (InputStream in = open(path)) {
+            BufferedImage raw = ImageIO.read(in);
             if (raw == null) {
                 System.out.println("อ่านไฟล์รูปไม่ได้: " + path);
                 return empty();
@@ -74,6 +86,9 @@ public class Sprite {
             int h = Math.max(1, (int) Math.round(box[3] * scale));
             BufferedImage small = resize(cropped, w, h);
             return new Sprite(small, raw.getWidth(), raw.getHeight(), box[0], box[1], box[2], box[3]);
+        } catch (FileNotFoundException e) {
+            System.out.println("ไม่พบไฟล์รูป: " + path);
+            return empty();
         } catch (Exception e) {
             System.out.println("โหลดรูปไม่สำเร็จ: " + path);
             return empty();
