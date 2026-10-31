@@ -1,0 +1,14 @@
+# Compiled output
+bin/
+out/
+*.class
+
+# High scores are saved per machine
+highscore*.txt
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
