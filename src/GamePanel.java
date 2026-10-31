@@ -15,7 +15,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import javax.swing.JPanel;
@@ -288,9 +288,8 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
             patienceBars[i] = Sprite.load("assets/images/" + (31 + i) + ".png");
         }
 
-        try {
-            File fontFile = Sprite.findFile("assets/fonds/PressStart2P-Regular.ttf");
-            pixelFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(16f);
+        try (InputStream fontIn = Sprite.open("assets/fonds/PressStart2P-Regular.ttf")) {
+            pixelFont = Font.createFont(Font.TRUETYPE_FONT, fontIn).deriveFont(16f);
             pixelBig = pixelFont.deriveFont(30f);
             pixelMid = pixelFont.deriveFont(22f);
             pixelSmall = pixelFont.deriveFont(11f);
