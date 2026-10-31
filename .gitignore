@@ -12,3 +12,7 @@ highscore*.txt
 *.iml
 .DS_Store
 Thumbs.db
+
+# Built game
+build/
+*.jar
